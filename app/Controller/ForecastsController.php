@@ -86,6 +86,27 @@ class ForecastsController extends AppController {
             '_serialize' => array('datos')
         ));
     }
+    public function saveforecasts()
+    {
+        $idUsuario=$this->request->data["idUsuario"];
+        $idBet=$this->request->data["idBet"];
+        //Recibo un vector 
+        $idGames=$this->request->data["$idGames"];
+        $marcadores_local=$this->request->data["marcadores_local"];
+        $marcadores_visitante=$this->request->data["marcadores_visitante"];
+        $i=0;
+        foreach ($marcadores_local as $marcador_local)
+        {
+            $idGame=$idGames[$i];
+            $marcador_visitante=$marcadores_visitante[$i];
+            debug("idUsuario: ".$idUsuario);
+            debug("idBet: ".$idBet);
+            debug("idGame: ".$idGame);
+            debug("marcador_local: ".$marcador_local);
+            debug("marcadores_visitante: ".$marcador_visitante);
+            
+        }
+    }
 
 
 }

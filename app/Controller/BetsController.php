@@ -53,6 +53,7 @@ class BetsController extends AppController {
      * Respuesta
      *      datos:
      *          -1: Ocurrior un error, el nombre de la polla y el id no coinciden
+     *          -2: El usuario ya se unio a esta polla
      *          0: Todo bien
      */
     public function joinbet()
@@ -71,9 +72,18 @@ class BetsController extends AppController {
         {
             $datos=array("-1");
         }else{
-            $sql="insert into bets_users (bet_id,user_id) values($idBet,$idUsuario);";
-            $this->Bet->query($sql);
-            $datos=  $this->Bet->id;
+            //Verifico que el usuario no se haya unido antes
+            $sql="select id from bets_users where bet_id=$idBet and user_id=$idUsuario";
+            $r=  $this->Bet->query($sql);
+            if(count($r)>=1)
+            {
+                $datos=array("-2");
+            }else{
+                $sql="insert into bets_users (bet_id,user_id) values($idBet,$idUsuario);";
+                $this->Bet->query($sql);
+                $datos=  $this->Bet->id;
+            }
+            
                
         }
         $this->set(array(
@@ -111,6 +121,17 @@ class BetsController extends AppController {
             '_serialize' => array('datos')
         ));
     }
+    /**
+     * Invia invitaciones a una polla en especifico
+     * direccion: bet/sendinvitation
+     * Parametros:
+     * --> idBet
+     * -->  nombreBet
+     * -->  usuarios: String con todos los nombres de las personas a invitar
+     *                cada persona esta separada por un '-'
+     * -->  correos: String con todos los correos de las personas anteriores a invitar
+     *              cada correo esta separado con un '-'  
+     */
     public function sendinvitation() 
     {
         $idBet=$this->request->data["idBet"];

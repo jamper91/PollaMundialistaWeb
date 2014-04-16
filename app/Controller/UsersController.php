@@ -47,19 +47,38 @@ class UsersController extends AppController {
                 ));
                
           }
-//        $nombre=$this->request->data['nombre'];
-//        $apellido=$this->request->data['apellido'];
-//        $nick=$this->request->data['nick'];
-//        $email=$this->request->data['email'];
-//        $pass=$this->request->data['pass'];
-//        $parametros=array(
-//            
-//        );
-//            $datos= $this->Almacene->query($sql);
-//            $this->set(array(
-//                'datos' => $datos,
-//                '_serialize' => array('datos')
-//            ));
+
+    }
+    
+    /**
+     * Se encarga de verificar si un usuario existe en el sistema con esos datos
+     * direccion: users/login.xml
+     * Parametros:
+     * -->  nick
+     * -->  pass
+     * Respuesta
+     * -->  datos
+     *      -->User
+     *          id
+     *          nombres
+     *          apellidos
+     *          nick
+     *          email
+     *          pass
+     *
+     */
+    public function login()
+    {
+        $nick=$this->request->data['nick'];
+        $pass=$this->request->data['pass'];
+        $parametros=array(
+            'conditions'=>array("nick"=>$nick,"password"=>$pass)
+        );
+        $datos=  $this->User->find("all",$parametros);
+        $this->set(array(
+            'datos' => $datos,
+            '_serialize' => array('datos')
+        ));
     }
 
 }
