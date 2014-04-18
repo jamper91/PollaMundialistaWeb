@@ -69,10 +69,11 @@ class UsersController extends AppController {
      */
     public function login()
     {
+//        $this->layout="webservice";
         $nick=$this->request->data['nick'];
         $pass=$this->request->data['pass'];
         $parametros=array(
-            'conditions'=>array("nick"=>$nick,"password"=>$pass)
+            'conditions'=>array("email"=>$nick)
         );
         $datos=  $this->User->find("all",$parametros);
         $this->set(array(

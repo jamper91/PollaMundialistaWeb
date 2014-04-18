@@ -86,26 +86,89 @@ class ForecastsController extends AppController {
             '_serialize' => array('datos')
         ));
     }
+    /**
+     * Almacenas las predicciones del usuario
+     * direccion: forecasts/saveforecasts.xml
+     * Parametros
+     * -->  idUsuario
+     * -->  idBet
+     * -->  idGames: Es un vector con los ids de los juegos , cada juego esta
+     *              separado por un "-"
+     * -->  marcadores_local: Es un vector con los marcadores del equipo local
+     *                      Cada marcador esta separado con un "-"
+     * -->  marcadores_visitante: Es un vector con los marcadores del equipo visitante
+     *                      Cada marcador esta separado con un "-".
+     * -->  idForecasts: Vector que contiene los ids de las predicciones ya realizadas
+     *                  para poder actualizaras, cada prediccion esta separa 
+     *                  con un "-"
+     * Respuesta
+     * -->  datos: Si responde ok es porque todo ha ocurrido bien
+     */
     public function saveforecasts()
     {
+        $this->layout="webservice";
         $idUsuario=$this->request->data["idUsuario"];
         $idBet=$this->request->data["idBet"];
         //Recibo un vector 
-        $idGames=$this->request->data["$idGames"];
+        $idGames=$this->request->data["idGames"];
+        $idForecasts=$this->request->data["idForecasts"];
         $marcadores_local=$this->request->data["marcadores_local"];
         $marcadores_visitante=$this->request->data["marcadores_visitante"];
+        
+        //Recorro todos los marcadores de locales y visitantes
+        $locales = explode("-", $marcadores_local);
+        $visitantes= explode("-",$marcadores_visitante);
+        $juegos=explode("-", $idGames);
+        $predicciones=explode("-", $idForecasts);
         $i=0;
-        foreach ($marcadores_local as $marcador_local)
+        try {
+            foreach ($locales as $marcador_local)
+            {
+                $idGame=$juegos[$i];
+                $marcador_visitante=$visitantes[$i];
+                $idForecast=$predicciones[$i];
+//                debug($idForecast);
+                if($idForecast!="0"){
+//                    debug("Entre");
+                    $this->Forecast->id = $idForecast;
+                }else{
+                    $this->Forecast->create();
+                }
+                $data=array(
+                    "Forecast"=>array(
+                            "user_id"=>$idUsuario,
+                            "game_id"=>$idGame,
+                            "bet_id"=>$idBet,
+                            "marcador_local"=>$marcador_local,
+                            "marcador_visitante"=>$marcador_visitante
+                        )
+                );
+
+                
+                
+                if($this->Forecast->save($data))
+                {
+                    
+                }else{
+                    debug($this->Forecast->validationErrors);
+                }
+                
+                
+                $i++;
+
+            }
+            $datos="ok";
+        } catch (Exception $exc) 
         {
-            $idGame=$idGames[$i];
-            $marcador_visitante=$marcadores_visitante[$i];
-            debug("idUsuario: ".$idUsuario);
-            debug("idBet: ".$idBet);
-            debug("idGame: ".$idGame);
-            debug("marcador_local: ".$marcador_local);
-            debug("marcadores_visitante: ".$marcador_visitante);
-            
+            $datos=$exc->getTraceAsString();
+//            echo $exc->getTraceAsString();
         }
+        $this->set(array(
+            'datos' => $datos,
+            '_serialize' => array('datos')
+        ));
+
+        
     }
 
 

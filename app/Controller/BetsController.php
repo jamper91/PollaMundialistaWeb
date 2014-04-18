@@ -24,7 +24,7 @@ class BetsController extends AppController {
      * -->  nombre
      * -->  premio
      * -->  informacion
-     * -->  administrador: es el id dle usuario que administra la polla
+     * -->  administrador: es el id del usuario que administra la polla
      * 
      * Respuesta
      *      datos: es el id de la polla creada
@@ -35,6 +35,12 @@ class BetsController extends AppController {
           if(!empty($this->request->data))
           {
                $resul= $this->Bet->save($this->request->data);
+               //Obtengo el id de la polla
+               $idBet=$this->Bet->id;
+               //Obtengo el id del administrador de la polla
+               $idAdmin=  $this->request->data["administrador"];
+               $sql="insert into bets_users (bet_id,user_id) values($idBet,$idAdmin)";
+               $this->Bet->query($sql);
                $datos= $this->Bet->id;
                $this->set(array(
                     'datos' => $datos,
@@ -154,6 +160,7 @@ class BetsController extends AppController {
           $Email->viewVars(array('nombreUsuario' => $user,"nombreBet"=>$nombreBet,"idBet"=>$idBet));
           $Email->to($email);
           $Email->send();
+          $i++;
         }
         $this->render(false);
     }
