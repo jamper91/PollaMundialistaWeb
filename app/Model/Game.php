@@ -13,7 +13,7 @@ App::uses('AppModel', 'Model');
  * @author Jorge Moreno
  */
 class Game extends AppModel {
-    public $hasMany=array("Stadistic");
+//    public $hasMany='Stadistic';
     public $belongsTo = array(
         'Local' => array(
             'className' => 'Team',

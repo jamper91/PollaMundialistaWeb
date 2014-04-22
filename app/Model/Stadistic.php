@@ -13,5 +13,5 @@ App::uses('AppModel', 'Model');
  * @author Jorge Moreno
  */
 class Stadistic extends AppModel {
-    
+    public $belongsTo=array("Game");
 }

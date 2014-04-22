@@ -17,5 +17,36 @@ class StadisticsController extends AppController {
     public function index($id) {
         
     }
+    /**
+     * Obtiene las estadisticas de un juego en especifico
+     * direccion: stadistics/getstadistics.xml
+     * Parametros:
+     * -->  idGame
+     * Respuesta:
+     * -->  Stadistic:
+     *          informacion
+     * -->  Game:
+     *      -->Local
+     *          nombre
+     *      -->Visitante
+     *          nombre     
+     */
+    public function getstadistics() 
+    {
+        $this->layout="webservice";
+        $idGame=$this->request->data["idGame"];
+        $options=array(
+          "conditions"=> array (
+              "Stadistic.game_id"=>$idGame
+          ),
+          "recursive"=>2
+        );
+        $datos=  $this->Stadistic->find("all",$options);
+        $this->set(array(
+            'datos' => $datos,
+            '_serialize' => array('datos')
+        ));
+    }
+   
 
 }

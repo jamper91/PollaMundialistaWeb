@@ -71,7 +71,6 @@ class GamesController extends AppController {
     {
         $idUsuario=  $this->request->data["idUsuario"];
         $idBet=  $this->request->data["idBet"];
-//        debug("Usuario id: ".$idUsuario);
         $this->layout="webservice";
         $options=array(
             "fields"=>array(
@@ -84,7 +83,7 @@ class GamesController extends AppController {
                 "Local.nombre",
                 "Visitante.nombre",
                 "Forecast.marcador_local",
-                "Forecast.marcador_visitante"
+                "Forecast.marcador_visitante",
             ),
             "joins"=>array(
                 array(
