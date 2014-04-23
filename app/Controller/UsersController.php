@@ -81,5 +81,14 @@ class UsersController extends AppController {
             '_serialize' => array('datos')
         ));
     }
+    /**
+     * Esta funcion se encarga de retornar la cantidad de personas en la polla,
+     * la posicion del usuario en entre todas las personas y la puntuacion que 
+     * el usuario lleva
+     */
+    public function getInformacion() {
+        $idBet=$this->request->data['idBet'];
+        $idUsuario=$this->request->data['idUsuario'];
+    }
 
 }
