@@ -130,18 +130,50 @@ class ForecastsController extends AppController {
      * -->  idBet: Id de la polla
      * Respuesta
      * -->  datos
-     *          u
-     *              nick
-     *          Forecast
-     *              puntaje
+     *      -->b_u
+     *          user_id
+     *          bet_id
+     *      -->u
+     *          nick
+     *      -->Forecast
+     *          puntaje
      */
     public function getscorebybet() 
     {
-        $idPolla=  $this->request->data["idBet"];
+        $idBet=  $this->request->data["idBet"];
         $this->layout="webservice";
         $this->Forecast->virtualFields['puntaje'] = 0;
-        $sql="select u.nick, count(f.puntuacion) as Forecast__puntaje from users u,"
-                . " forecasts f where f.bet_id=$idPolla and f.user_id=u.id";
+        $this->Forecast->virtualFields['puntaje'] = 0;
+        $sql="  select
+                        b_u.user_id,
+                        b_u.bet_id,
+                        u.nick,
+                        COALESCE(a.puntaje,0) as Forecast__puntaje
+                from
+                        users u,
+                        bets_users b_u
+                        
+                left join
+                        (
+                        select
+                                b_u.user_id,
+                                sum(f.puntuacion) as puntaje
+                        from
+                                forecasts f,
+                                bets_users b_u
+                        where
+                                b_u.bet_id=$idBet and
+                                b_u.bet_id=f.bet_id and
+                                b_u.user_id=f.user_id
+                    ) a
+                on
+                        a.user_id=b_u.user_id
+                where
+                        b_u.bet_id=$idBet and
+                        b_u.user_id=u.id
+                order by 
+                        puntaje DESC
+                ";
         $datos=  $this->Forecast->query($sql);
         $this->set(array(
             'datos' => $datos,
