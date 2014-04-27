@@ -43,6 +43,62 @@ class GamesController extends AppController {
         ));
     }
     /**
+     * Se encarga de listar ls partidos del campeonato, agrupado por grupos
+     * y ordenados por fecha
+     * direccion:   games/getgamesorderbygroup.xml
+     * Parametros:
+     *  ninguno
+     * Respuesta
+     * -->datos
+     *      -->Game
+     *          id
+     *          local
+     *          visitante
+     *          goles_local
+     *          goles_visitante
+     *          fecha
+     *          finalizo
+     *          fase
+     *      -->Local
+     *          id
+     *          nombre
+     *          bandera
+     *          grupo
+     *      -->Visitante
+     *          id
+     *          nombre
+     *          bandera
+     *          grupo
+     */
+    public function getgamesorderbygroup() 
+    {
+        $this->layout="webservice";
+        $options=array(
+            'joins'=>array(
+                array(
+                    'table' => 'teams',
+                    'alias' => 'Team',
+                    'type' => 'LEFT',
+                    'foreignKey' => FALSE,
+                    'conditions' => array(
+                        'Game.local = Team.id'
+                    )
+                ),
+            ),
+            'group'=>array(
+                'Team.grupo'
+            ),
+            'order'=>array(
+                'Game.fecha'
+            )
+        );
+        $datos=  $this->Game->find("all");
+        $this->set(array(
+            'datos' => $datos,
+            '_serialize' => array('datos')
+        ));
+    }
+    /**
      * Retorna todos los partidos en la base de datos
      * direccion:   games/getgamesbyuser.xml
      * Parametros
