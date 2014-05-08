@@ -91,7 +91,7 @@ class ForecastsController extends AppController {
                     )
                 ),
                 array(
-                    "table"=>"Teams",
+                    "table"=>"teams",
                     "alias"=>"Local",
                     "type"=>"left",
                     "fields"=>array(
@@ -102,7 +102,7 @@ class ForecastsController extends AppController {
                     )
                 ),
                 array(
-                    "table"=>"Teams",
+                    "table"=>"teams",
                     "alias"=>"Visitante",
                     "type"=>"left",
                     "fields"=>array(
@@ -142,7 +142,7 @@ class ForecastsController extends AppController {
     {
         $idBet=  $this->request->data["idBet"];
         $this->layout="webservice";
-        $this->Forecast->virtualFields['puntaje'] = 0;
+        //$this->Forecast->virtualFields['puntaje'] = 0;
         $this->Forecast->virtualFields['puntaje'] = 0;
         $sql="  select
                         b_u.user_id,
@@ -165,6 +165,8 @@ class ForecastsController extends AppController {
                                 b_u.bet_id=$idBet and
                                 b_u.bet_id=f.bet_id and
                                 b_u.user_id=f.user_id
+                         group by
+                                b_u.user_id
                     ) a
                 on
                         a.user_id=b_u.user_id
@@ -363,14 +365,24 @@ class ForecastsController extends AppController {
                 {
                     if($marcador_local==$goles_local && $marcador_visitante==$goles_visitante)
                     {
-                        $prediccion["puntuacion"]=3;
+                        $prediccion["puntuacion"]=6;
+                    }else if($marcador_local>$marcador_visitante && $goles_local>$goles_visitante)
+                    {
+                        $prediccion["puntuacion"]=2;
+                    }else if($marcador_local<$marcador_visitante && $goles_local<$goles_visitante)
+                    {
+                        $prediccion["puntuacion"]=2;
+                    }else if($marcador_local==$marcador_visitante && $goles_local==$goles_visitante){
+                        $prediccion["puntuacion"]=2;
                     }else{
                         $prediccion["puntuacion"]=0;
                     }
+                    
                     $this->Forecast->save($prediccion);
                 }
 
             }
+            
             
             
            
@@ -397,6 +409,8 @@ class ForecastsController extends AppController {
                                 b_u.bet_id=$idBet and
                                 b_u.bet_id=f.bet_id and
                                 b_u.user_id=f.user_id
+                         group by
+                               b_u.user_id
                     ) a
                 on
                         a.user_id=b_u.user_id
@@ -417,13 +431,15 @@ class ForecastsController extends AppController {
                 $posicion=$i;
                 break;
             }
+            $i++;
         }
         $datos=array(
             "total"=>$total,
             "posicion"=>$posicion
         );
+        //debug(print_r($datos));
         return $datos;
-        debug(print_r($datos));
+        
     
     }
 

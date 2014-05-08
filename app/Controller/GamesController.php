@@ -117,6 +117,7 @@ class GamesController extends AppController {
      *          goles_local
      *          goles_visitante
      *          fecha
+     *          fechaSistema
      *      -->Local
      *          nombre
      *      -->Visitante
@@ -127,11 +128,13 @@ class GamesController extends AppController {
     {
         $idUsuario=  $this->request->data["idUsuario"];
         $idBet=  $this->request->data["idBet"];
+        $this->Game->virtualFields['fechaSistema'] = "NOW()";
         $this->layout="webservice";
         $options=array(
             "fields"=>array(
                 "Forecast.id",
                 "Game.id",
+                "Game.fechaSistema",
                 "Forecast.user_id",
                 "Game.goles_local",
                 "Game.goles_visitante",

@@ -98,35 +98,65 @@ class BetsController extends AppController {
                 ));
     }
     
+
+    
     /**
      * Obtiene informacion de una polla en especifico
      * direccion: bets/getinfobet.xml
      * Parametros:
      * -->  idBet
      * Respuesta:
-     * -->  datos
+     * -->  datos*
      *      -->Bet
      *          id
      *          nombre
      *          premio
      *          informacion
-     *          administrador
+     *      -->User
+     *          nombre
      */
     public function getinfobet()
     {
         $this->layout="webservice";
         $idBet=$this->request->data["idBet"];
         $options=Array(
+            "fields"=>array(
+              "Bet.id",
+              "Bet.nombre",
+              "Bet.informacion",
+              "Bet.premio",
+              "User.nombres",
+              "User.nick"
+            ),
             "conditions"=>array("Bet.id"=>$idBet),
-            "recursive"=>0
+            "recursive"=>-1,
+            "joins"=>array(
+                array(
+                    "table"=>"bets_users",
+                    "alias"=>"BetsUser",
+                    "type"=>"LEFT",
+                    "conditions"=>array(
+                        "BetsUser.bet_id=$idBet"
+                    )
+                ),
+                array(
+                    "table"=>"users",
+                    "alias"=>"User",
+                    "type"=>"LEFT",
+                    "conditions"=>array(
+                        "User.id=BetsUser.user_id"
+                    )
+                )
+            )
         );
-        $datos=  $this->Bet->find('first', $options);
+        $datos=  $this->Bet->find('all', $options);
         $this->set(
         array(
             'datos' => $datos,
             '_serialize' => array('datos')
         ));
     }
+    
     /**
      * Invia invitaciones a una polla en especifico
      * direccion: bet/sendinvitation

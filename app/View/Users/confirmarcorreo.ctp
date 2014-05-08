@@ -1,0 +1,4 @@
+Probando
+<?php echo $mensaje;
+    
+?>
